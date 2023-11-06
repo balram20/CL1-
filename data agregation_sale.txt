@@ -1,0 +1,35 @@
+
+import pandas as pd
+import tensorflow as tf
+import numpy as np
+#Creating dataframe
+df = pd.read_csv('sales_data_sample 2.csv', encoding = "latin")
+
+
+dfcsv = pd.DataFrame(df)
+#Printing first 5 rows of dataset
+dfcsv.head(5)
+
+dfcsv.shape
+
+dfcsv.isna().sum()
+
+dfcsv.describe
+
+dfcsv = dfcsv.drop(['ADDRESSLINE1','ADDRESSLINE2','CITY','STATE','TERRITORY'],axis = 1)
+
+dfcsv.isna().sum()
+
+dfcsv = dfcsv['POSTALCODE'].fillna(dfcsv.POSTALCODE.mode(), inplace=True)
+columns_to_drop = ['ADDRESSLINE1', 'ADDRESSLINE2', 'CITY', 'STATE', 'TERRITORY']
+
+import plotly.express as px
+
+fig = px.bar(df, x='YEAR_ID', y='SALES', title='Total Sales by Year')
+fig.show()
+
+fig = px.bar(df, x='QTR_ID', y='SALES', title='Total Sales by Quarter')
+fig.show()
+
+fig = px.line(df, x='ORDERDATE', y='SALES', title='Sales Over Time')
+fig.show()

@@ -1,0 +1,59 @@
+
+import pandas as pd
+
+# csv
+df = pd.read_csv('Dummy Data HSS.csv')
+
+# excel
+# df_excel = pd.read_excel('sales_data.xlsx')
+
+# json
+# import json
+# with open('sales.json') as f:
+#     data_json = json.load(f)
+# df_json = pd.DataFrame(data_json)
+
+df.head()
+
+df.info()
+
+df.isnull().sum()
+
+value = df['TV'].mean()
+df['TV'].fillna(value, inplace=True)
+# df.drop_duplicates(inplace=True)
+
+df.isnull().sum()
+
+# merged_df = pd.merge(df1, df2, on='common_column', how='inner')
+# df[['day', 'month', 'year']] = df['date'].str.split('/', expand=True)
+
+df.describe()
+
+category_sales = df.groupby(['TV', 'Radio', 'Social Media'])['Sales'].sum()
+category_sales
+
+total_sales = df['Sales'].sum()
+print('total sales',total_sales)
+avg_order_value = df['Sales'].mean()
+print('avg order value',avg_order_value)
+
+import matplotlib.pyplot as plt
+
+channels = ['TV', 'Radio', 'Social Media']
+
+sales = df[['TV', 'Radio', 'Social Media']].sum()
+
+plt.bar(channels, sales)
+plt.xlabel('Channel')
+plt.ylabel('Sales')
+plt.title('Sales by Advertising Channel')
+plt.show()
+
+import plotly.express as px
+
+channels = ['TV', 'Radio', 'Social Media']
+
+sales = df[['TV', 'Radio', 'Social Media']].sum()
+
+px.bar(x=channels, y=sales)

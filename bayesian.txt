@@ -1,0 +1,54 @@
+
+# pip install --upgrade pgmpy
+
+import pandas as pd
+from pgmpy.models import BayesianNetwork
+from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.inference import VariableElimination
+
+# Load the Heart Disease UCI dataset (replace 'heart_disease.csv' with your dataset path)
+data = pd.read_csv('heart.csv')
+
+# Define the Bayesian network structure
+model = BayesianNetwork([('Age', 'HeartDisease'),
+                         ('Sex', 'HeartDisease'),
+                         ('ChestPainType', 'HeartDisease'),
+                         ('RestingBP', 'HeartDisease'),
+                         ('Cholesterol', 'HeartDisease'),
+                         ('FastingBS', 'HeartDisease'),
+                         ('RestingECG', 'HeartDisease'),
+                         ('MaxHR', 'HeartDisease'),
+                         ('ExerciseAngina', 'HeartDisease'),
+                         ('Oldpeak', 'HeartDisease'),
+                         ('ST_Slope', 'HeartDisease')])
+
+# Estimate CPDs from data
+model.fit(data, estimator=MaximumLikelihoodEstimator)
+
+# Create an inference object
+inference = VariableElimination(model)
+
+# Provide evidence for diagnosis
+evidence = {
+    'Age': 40,
+    'Sex': 'M',
+    'ChestPainType': 'ATA',
+    'RestingBP': 140,
+    'Cholesterol': 289,
+    'FastingBS': 0,
+    'RestingECG': 'Normal',
+    'MaxHR': 172,
+    'ExerciseAngina': 'N',
+    'Oldpeak': 0,
+    'ST_Slope': 'Up'
+}
+
+# Query the model for the probability of Heart Disease
+query_result = inference.query(variables=['HeartDisease'], evidence=evidence)
+print(query_result)
+
+# Diagnose the patient based on the probability
+if query_result.values[1] > query_result.values[0]:
+    print("The patient is likely to have Heart Disease.")
+else:
+    print("The patient is likely not to have Heart Disease.")

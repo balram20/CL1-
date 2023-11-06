@@ -1,0 +1,64 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv("data.csv",encoding='latin1')
+print(data.index)
+
+sns.set(style="ticks", rc={'figure.figsize': (20, 15)})
+
+print(data.isnull().sum())
+print(data.shape)
+data.info()
+
+print(data.isnull().sum())
+data.tail()
+
+state_means = data.groupby('state')['no2'].mean()
+
+x_axis = state_means.index
+y_axis = state_means.values
+
+plt.figure(figsize=(12, 6))
+plt.bar(x_axis, y_axis, color='blue')
+plt.xlabel('State')
+plt.ylabel('Mean NO2 Value')
+plt.title('Mean NO2 Values by State')
+plt.xticks(rotation=90)  
+plt.tight_layout()
+plt.show()
+
+state_means = data.groupby('state')['so2'].mean()
+
+x_axis = state_means.index
+y_axis = state_means.values
+
+plt.figure(figsize=(12, 6))
+plt.bar(x_axis, y_axis, color='blue')
+plt.xlabel('State')
+plt.ylabel('Mean SO2 Value')
+plt.title('Mean SO2 Values by State')
+plt.xticks(rotation=90)  
+plt.tight_layout()
+plt.show()
+
+
+state_means = data.groupby('state')['no2'].mean()
+
+x_axis = state_means.index
+y_axis = state_means.values
+
+plt.figure(figsize=(12, 6))
+plt.scatter(x_axis, y_axis, color='blue')
+plt.xlabel('State')
+plt.ylabel('Mean NO2 Value')
+plt.title('Mean NO2 Values by State')
+plt.xticks(rotation=90)  
+plt.tight_layout()
+plt.show()
+
+plt.boxplot(y_axis)
+plt.ylabel('Mean NO2 Value')
+plt.show()

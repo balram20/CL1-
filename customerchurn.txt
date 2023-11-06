@@ -1,0 +1,54 @@
+
+import pandas as pd #data manipulation
+import numpy as np #numerical computations
+from sklearn.model_selection import train_test_split
+from sklearn import metrics #evaluating the performance of machine learning model
+
+data = pd.read_csv("Telecom_Customer_Churn.csv")
+print(data.index)
+
+print(data.columns)
+
+data.shape
+
+print(data.head())
+
+data.isna().sum()
+
+data.isnull().sum()
+
+print("Number of rows before removing duplicates:", len(data))
+
+# Remove duplicate records
+data_cleaned = data.drop_duplicates()
+
+# Check the number of rows after removing duplicates
+print("Number of rows after removing duplicates:", len(data_cleaned))
+
+data.describe()
+
+#Measure of frequency destribution
+unique, counts = np.unique(data['Tenure in Months'], return_counts=True)
+print(unique, counts)
+
+unique, counts = np.unique(data['Total Charges'], return_counts=True)
+print(unique, counts)
+
+import seaborn as sns #Seaborn library for data visualization
+sns.pairplot(data)
+
+X = data.drop("Total Revenue", axis=1)
+y = data["Total Revenue"]
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+X_train.shape
+
+y_train.shape
+
+X_test.shape
+
+y_test.shape
+
+# Export the cleaned dataset to a CSV file
+data.to_csv("Cleaned_Telecom_Customer_Churn.csv", index=False)

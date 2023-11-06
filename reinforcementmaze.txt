@@ -1,0 +1,74 @@
+
+import numpy as np
+import random
+
+# Define the maze environment
+# 1 is the path, 0 is the wall
+maze = np.array([
+    [1, 0, 0, 0, 0],
+    [1, 0, 1, 1, 0],
+    [1, 1, 1, 0, 0],
+    [0, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1]
+])
+
+# 1 represents free space, 0 represents a wall
+start = (0, 0)
+goal = (4, 4)
+
+# Initialize Q-table
+Q = np.zeros((maze.shape[0], maze.shape[1], 4))  # 4 for the number of actions
+
+# Hyperparameters
+alpha = 0.1  # Learning rate
+gamma = 0.9  # Discount factor
+epsilon = 0.1  # Exploration-exploitation trade-off
+
+# Define possible actions
+actions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up
+
+# Define the Q-learning function
+def q_learning(num_episodes):
+    for episode in range(num_episodes):
+        state = start
+        while state != goal:
+            # Choose action using epsilon-greedy policy
+            if random.uniform(0, 1) < epsilon:
+                action = random.choice(actions)
+            else:
+                q_values = [Q[state[0], state[1], i] for i in range(4)]
+                action = actions[np.argmax(q_values)]
+
+            # Take action and observe new state and reward
+            new_state = (state[0] + action[0], state[1] + action[1])
+            if new_state[0] < 0 or new_state[0] >= maze.shape[0] or new_state[1] < 0 or new_state[1] >= maze.shape[1] or maze[new_state] == 0:
+                reward = -1
+                new_state = state
+            elif new_state == goal:
+                reward = 1
+            else:
+                reward = 0
+
+            # Update Q-table
+            best_q = max(Q[new_state[0], new_state[1], i] for i in range(4))
+            Q[state[0], state[1], actions.index(action)] = (1 - alpha) * Q[state[0], state[1], actions.index(action)] + alpha * (reward + gamma * best_q)
+
+            # Move to new state
+            state = new_state
+
+# Train the agent
+q_learning(1000)
+
+def test_agent():
+    state = start
+    path = [state]
+    while state != goal:
+        q_values = [Q[state[0], state[1], i] for i in range(4)]
+        action = actions[np.argmax(q_values)]
+        state = (state[0] + action[0], state[1] + action[1])
+        path.append(state)
+    return path
+
+path = test_agent()
+print("Path from start to goal:", path)
+

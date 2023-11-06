@@ -1,0 +1,39 @@
+
+# dataset link:  https://www.kaggle.com/datasets/uciml/iris
+
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn import datasets
+
+# Load the Iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+# Perform K-Means clustering for different number of clusters
+wcss = []  # within-cluster sum of squares
+
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, init='k-means++', max_iter=300, n_init=10, random_state=0)
+    kmeans.fit(X)
+    wcss.append(kmeans.inertia_)  # inertia_ gives the WCSS value for a particular number of clusters
+
+
+# Plot the WCSS values
+plt.plot(range(1, 11), wcss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of Clusters')
+plt.ylabel('WCSS')
+plt.show()
+
+# Perform K-Means clustering with 3 clusters
+kmeans = KMeans(n_clusters=3, init='k-means++', max_iter=300, n_init=10, random_state=0)
+y_pred = kmeans.fit_predict(X)
+
+# Print the cluster centers
+print(kmeans.cluster_centers_)
+
+# Print the predicted cluster labels
+print(y_pred)

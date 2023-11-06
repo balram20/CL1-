@@ -1,0 +1,71 @@
+
+import requests
+import pandas as pd
+import datetime
+# Set your OpenWeatherMap API key
+api_key = 'fb365aa6104829b44455572365ff3b4e'
+
+lat = 18.184135
+lon = 74.610764
+#https://openweathermap.org/api/one-call-3#how How to use api call
+# Construct the API URL
+api_url = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}"
+# Send a GET request to the API
+response = requests.get(api_url)
+weather_data = response.json() #pass response to weather_data object(dictionary)
+weather_data.keys()
+dict_keys=(['cod', 'message', 'cnt', 'list', 'city'])
+weather_data['list'][0]
+{'dt': 1690189200,
+ 'main': {'temp': 298.21,
+ 'feels_like': 298.81,
+ 'temp_min': 298.1,
+ 'temp_max': 298.21,
+ 'pressure': 1006,
+ 'sea_level': 1006,
+ 'grnd_level': 942,
+ 'humidity': 78,
+ 'temp_kf': 0.11},
+ 'weather': [{'id': 804,
+ 'main': 'Clouds',
+ 'description': 'overcast clouds',
+ 'icon': '04d'}],
+ 'clouds': {'all': 100},
+ 'wind': {'speed': 6.85, 'deg': 258, 'gust': 12.9},
+ 'visibility': 10000,
+ 'pop': 0.59,
+ 'sys': {'pod': 'd'},
+ 'dt_txt': '2023-07-24 09:00:00'}
+
+len(weather_data['list'])
+
+weather_data['list'][0]['weather'][0]['description']
+
+temperatures = [item['main']['temp'] for item in weather_data['list']]
+timestamps = [pd.to_datetime(item['dt'], unit='s') for item in weather_data['list']]
+temperature = [item['main']['temp'] for item in weather_data['list']]
+humidity = [item['main']['humidity'] for item in weather_data['list']]
+wind_speed = [item['wind']['speed'] for item in weather_data['list']]
+weather_description = [item['weather'][0]['description'] for item in weather_data['list']]
+# Create a pandas DataFrame with the extracted weather data
+weather_df = pd.DataFrame({
+'Timestamp': timestamps,
+'Temperature': temperatures,
+'humidity': humidity,
+'wind_speed': wind_speed,
+'weather_description': weather_description,
+})
+# Set the Timestamp column as the DataFrame's index
+weather_df.set_index('Timestamp', inplace=True)
+max_temp = weather_df['Temperature'].max()
+max_temp
+
+min_temp = weather_df['Temperature'].min()
+min_temp
+
+# Handling missing values
+weather_df.fillna(0, inplace=True) # Replace missing values with 0 or appropriate value
+# Handling inconsistent format (if applicable)
+weather_df['Temperature'] = weather_df['Temperature'].apply(lambda x: x - 273.15 if isinstance(x, float)else x)
+
+print(weather_df)
